@@ -66,6 +66,7 @@ func BuildCommand() *cobra.Command {
 		Use:   "webpkit",
 		Short: l10n.T("Toolkit for converting conventionally formatted Web images to WebP"),
 	}
+	rootCmd.Flags().SetInterspersed(false)
 
 	// version sub command
 	versionCmd := &cobra.Command{
@@ -77,53 +78,29 @@ func BuildCommand() *cobra.Command {
 	}
 	rootCmd.AddCommand(versionCmd)
 
-	// cwebp sub command
-	cwebpCmd := cobra.Command{
-		Use:   "cwebp <...args>",
-		Short: l10n.T("Alias for cwebp command of libwebp"),
+	// raw command
+	rawCmd := &cobra.Command{
+		Use:   "raw [cwebp|dwebp|gif2webp|webpinfo] <...args>",
+		Short: l10n.T("Alias for a raw command of libwebp"),
+		Args:  cobra.MinimumNArgs(1),
 		Run: func(cmd *cobra.Command, args []string) {
-			SetUmaskOrExit(GlobalAppOptions.Umask)
-			code := cwebp.CWebP(args...)
-			os.Exit(code)
+			command := args[0]
+			args = args[1:]
+			if command == "cwebp" {
+				os.Exit(cwebp.CWebP(args...))
+			} else if command == "dwebp" {
+				os.Exit(dwebp.DWebP(args...))
+			} else if command == "gif2webp" {
+				os.Exit(gif2webp.Gif2WebP(args...))
+			} else if command == "webpinfo" {
+				os.Exit(webpinfo.WebPInfo(args...))
+			} else {
+				os.Stderr.WriteString(l10n.F("%s is unavailable command", command))
+			}
 		},
 	}
-	rootCmd.AddCommand(&cwebpCmd)
-
-	// dwebp sub command
-	dwebpCmd := cobra.Command{
-		Use:   "dwebp <...args>",
-		Short: l10n.T("Alias for dwebp command of libwebp"),
-		Run: func(cmd *cobra.Command, args []string) {
-			SetUmaskOrExit(GlobalAppOptions.Umask)
-			code := dwebp.DWebP(args...)
-			os.Exit(code)
-		},
-	}
-	rootCmd.AddCommand(&dwebpCmd)
-
-	// gif2webp sub command
-	gif2webpCmd := cobra.Command{
-		Use:   "gif2webp <...args>",
-		Short: l10n.T("Alias for gif2webp command of libwebp"),
-		Run: func(cmd *cobra.Command, args []string) {
-			SetUmaskOrExit(GlobalAppOptions.Umask)
-			code := gif2webp.Gif2WebP(args...)
-			os.Exit(code)
-		},
-	}
-	rootCmd.AddCommand(&gif2webpCmd)
-
-	// webpinfo sub command
-	webpinfoCmd := cobra.Command{
-		Use:   "webpinfo <...args>",
-		Short: l10n.T("Alias for webpinfo command of libwebp"),
-		Run: func(cmd *cobra.Command, args []string) {
-			SetUmaskOrExit(GlobalAppOptions.Umask)
-			code := webpinfo.WebPInfo(args...)
-			os.Exit(code)
-		},
-	}
-	rootCmd.AddCommand(&webpinfoCmd)
+	rawCmd.Flags().SetInterspersed(false)
+	rootCmd.AddCommand(rawCmd)
 
 	// convert sub command
 	convertCmd := cobra.Command{
