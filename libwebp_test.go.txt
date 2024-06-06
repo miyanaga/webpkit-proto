@@ -1,0 +1,7 @@
+package libwebp
+
+import "testing"
+
+func TestDummy(t *testing.T) {
+	// Dummy
+}
