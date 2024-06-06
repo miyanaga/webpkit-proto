@@ -3,8 +3,7 @@ package main
 import (
 	"fmt"
 	"os"
-	"strconv"
-	"syscall"
+	"runtime"
 	"time"
 
 	"github.com/ideamans/webpkit/beside"
@@ -43,15 +42,6 @@ func ParseAppOptionsOrExit() (string, time.Duration) {
 	return GlobalAppOptions.LockFilePath, lockExpires
 }
 
-func SetUmaskOrExit(umaskValue string) {
-	umask, err := strconv.ParseUint(umaskValue, 8, 32)
-	if err != nil {
-		os.Stderr.WriteString(l10n.F("Failed to parse %s as a duration", umaskValue))
-		os.Exit(1)
-	}
-	syscall.Umask(int(umask))
-}
-
 func ParseDurationOrExit(durationStr string) time.Duration {
 	duration, err := time.ParseDuration(durationStr)
 	if err != nil {
@@ -73,7 +63,7 @@ func BuildCommand() *cobra.Command {
 		Use:   "version",
 		Short: l10n.T("Print the version number"),
 		Run: func(cmd *cobra.Command, args []string) {
-			fmt.Printf("%s", Version)
+			fmt.Printf("%s %s %s", Version, runtime.GOOS, runtime.GOARCH)
 		},
 	}
 	rootCmd.AddCommand(versionCmd)

@@ -2,9 +2,11 @@ UNAME_S := $(shell uname -s)
 SED := $(if $(filter FreeBSD OpenBSD Darwin,$(UNAME_S)),gsed,sed)
 
 DEPS = libwebp/build/libwebp.a webpinfo/webpinfo.c cwebp/cwebp.c dwebp/dwebp.c gif2webp/gif2webp.c
+OUTPUT = ./webpkit
 
 webpkit: $(DEPS)
-	go build -o webpkit .
+	rm -f $(OUTPUT)
+	go build -o $(OUTPUT) .
 
 libwebp/build:
 	mkdir libwebp/build
@@ -40,4 +42,4 @@ debug: $(DEPS)
 clean:
 	rm -rf libwebp/build
 	rm -f webpinfo/webpinfo.c cwebp/cwebp.c dwebp/dwebp.c gif2webp/gif2webp.c
-	rm -f webpkit
+	rm -f $(OUTPUT)
