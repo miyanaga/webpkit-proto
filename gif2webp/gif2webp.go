@@ -1,8 +1,8 @@
 package gif2webp
 
 /*
-#cgo CFLAGS: -I. -I../libwebp -I../libwebp/src -I../libwebp/examples
-#cgo LDFLAGS: -static libwebp/build/CMakeFiles/gif2webp.dir/examples/gifdec.c.o -L../libwebp/build -lexampleutil -lextras -limagedec -limageenc -limageioutil -lwebpdecoder -lwebpdemux -lwebpmux -lpthread -lwebp -lsharpyuv -lgif -ljpeg -ltiff -lpng -lz -lm
+#cgo CFLAGS: -I. -I../libwebp -I../libwebp/src -I../libwebp/examples -I/usr/local/include
+#cgo LDFLAGS: -static libwebp/build/CMakeFiles/gif2webp.dir/examples/gifdec.c.o -L../libwebp/build -L/usr/local/lib -lexampleutil -lextras -limagedec -limageenc -limageioutil -lwebpdecoder -lwebpdemux -lwebpmux -lpthread -lwebp -lsharpyuv -lgif -ljpeg -ltiff -lpng -lz -lm
 
 #define WEBP_HAVE_GIF 1
 

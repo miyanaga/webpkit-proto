@@ -1,8 +1,8 @@
 package cwebp
 
 /*
-#cgo CFLAGS: -I. -I../libwebp -I../libwebp/src -I../libwebp/examples
-#cgo LDFLAGS: -static -L../libwebp/build -lexampleutil -lextras -limagedec -limageenc -limageioutil -lwebp -lwebpdecoder -lwebpdemux -lwebpmux -lsharpyuv -lpthread -ljpeg -ltiff -lpng -lz -lm
+#cgo CFLAGS: -I. -I../libwebp -I../libwebp/src -I../libwebp/examples -I/usr/local/include
+#cgo LDFLAGS: -static -L../libwebp/build -L/usr/local/lib -lexampleutil -lextras -limagedec -limageenc -limageioutil -lwebp -lwebpdecoder -lwebpdemux -lwebpmux -lsharpyuv -lpthread -ljpeg -ltiff -lpng -lz -lm
 
 #include <stdlib.h>
 #include "cwebp.c"
