@@ -35,3 +35,9 @@ test: $(DEPS)
 .PHONY: debug
 debug: $(DEPS)
 	go run ./...
+
+.PHONY: clean
+clean:
+	rm -rf libwebp/build
+	rm -f webpinfo/webpinfo.c cwebp/cwebp.c dwebp/dwebp.c gif2webp/gif2webp.c
+	rm -f webpkit
