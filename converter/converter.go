@@ -1,6 +1,8 @@
 package converter
 
 import (
+	"image/jpeg"
+	"image/png"
 	"os"
 	"path/filepath"
 
@@ -121,7 +123,7 @@ func (c *Converter) gifToWebP(inputPath string, outputPath string) error {
 	})
 }
 
-func (c *Converter) webPToPNG(inputPath string, outputPath string) error {
+func (c *Converter) webPToPng(inputPath string, outputPath string) error {
 	return c.safeConvert(inputPath, outputPath, fastimage.PNG, false, func(tmpPath string) error {
 		code := dwebp.DWebP("-quiet", "-o", tmpPath, inputPath)
 		if code != 0 {
@@ -129,7 +131,48 @@ func (c *Converter) webPToPNG(inputPath string, outputPath string) error {
 		}
 		return nil
 	})
+}
 
+func (c *Converter) webPToJpeg(inputPath string, outputPath string) error {
+	return c.safeConvert(inputPath, outputPath, fastimage.JPEG, false, func(tmpPath string) error {
+		tmp, err := os.CreateTemp("", "webpkit")
+		if err != nil {
+			return l10n.E("Failed to create a tmp file to write PNG data: %v", err)
+		}
+		tmp.Close()
+		defer os.RemoveAll(tmp.Name())
+
+		// Convert WebP to PNG at first
+		code := dwebp.DWebP("-quiet", "-o", tmp.Name(), inputPath)
+		if code != 0 {
+			return l10n.E("dwebp command exited with code %d", code)
+		}
+
+		// Convert the PNG to JPEG
+		pngFile, err := os.Open(tmp.Name())
+		if err != nil {
+			return l10n.E("Failed to open %s as PNG file: %v", tmp.Name(), err)
+		}
+		defer pngFile.Close()
+
+		pngImg, err := png.Decode(pngFile)
+		if err != nil {
+			return l10n.E("Failed to decode PNG image: %v", err)
+		}
+
+		jpegFile, err := os.Create(tmpPath)
+		if err != nil {
+			return l10n.E("Failed to create %s as JPEG file: %v", tmpPath, err)
+		}
+		defer jpegFile.Close()
+
+		err = jpeg.Encode(jpegFile, pngImg, &jpeg.Options{Quality: 80})
+		if err != nil {
+			return l10n.E("Failed to encode JPEG image: %v", err)
+		}
+
+		return nil
+	})
 }
 
 func (c *Converter) Convert(inputPath string, outputPath string) error {
@@ -147,7 +190,9 @@ func (c *Converter) Convert(inputPath string, outputPath string) error {
 	} else if it == fastimage.GIF && destExt == ".webp" {
 		return c.gifToWebP(inputPath, outputPath)
 	} else if it == fastimage.WEBP && destExt == ".png" {
-		return c.webPToPNG(inputPath, outputPath)
+		return c.webPToPng(inputPath, outputPath)
+	} else if it == fastimage.WEBP && destExt == ".jpg" || destExt == ".jpeg" {
+		return c.webPToJpeg(inputPath, outputPath)
 	} else {
 		return l10n.E("Unsupported conversion type pair from %s to %s", it, destExt)
 	}

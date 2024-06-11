@@ -17,12 +17,14 @@ type ImageDoubleInterface interface {
 type ImageDouble struct {
 	srcDirPath  string
 	destDirPath string
+	webPToPng   bool
 }
 
-func DefaultNewImageDouble(srcDirPath, destDirPath string) ImageDoubleInterface {
+func DefaultNewImageDouble(srcDirPath, destDirPath string, webPToPng bool) ImageDoubleInterface {
 	id := ImageDouble{
 		srcDirPath:  srcDirPath,
 		destDirPath: destDirPath,
+		webPToPng:   webPToPng,
 	}
 	return &id
 }
@@ -38,7 +40,11 @@ func (id *ImageDouble) Ensure(relPath string) error {
 	if srcExt == ".jpg" || srcExt == ".jpeg" || srcExt == ".png" || srcExt == ".gif" {
 		doubleExt = ".webp"
 	} else if srcExt == ".webp" {
-		doubleExt = ".png"
+		if id.webPToPng {
+			doubleExt = ".png"
+		} else {
+			doubleExt = ".jpg"
+		}
 	}
 	errorExt := ".err"
 

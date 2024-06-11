@@ -17,6 +17,7 @@ type MirrorApp struct {
 	destDirPath  string
 	LockFilePath string
 	LockExpires  time.Duration
+	WebPToPng    bool
 }
 
 func NewMirrorApp(srcDirPath, destDirPath string) *MirrorApp {
@@ -49,7 +50,7 @@ func (ma *MirrorApp) Run() error {
 		return l10n.E("Failed to get absolute path for %s: %v", ma.destDirPath, err)
 	}
 
-	id := app.NewImageDouble(srcDirAbsPath, destDirAbsPath)
+	id := app.NewImageDouble(srcDirAbsPath, destDirAbsPath, ma.WebPToPng)
 
 	targetExts := []string{".jpg", ".jpeg", ".png", ".gif", ".webp"}
 	err = filepath.WalkDir(srcDirAbsPath, func(fullPath string, info fs.DirEntry, err error) error {

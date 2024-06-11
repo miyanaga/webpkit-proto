@@ -16,6 +16,7 @@ type BesideApp struct {
 	dirPath      string
 	LockFilePath string
 	LockExpires  time.Duration
+	WebPToPng    bool
 }
 
 func NewBesideApp(dirPath string) *BesideApp {
@@ -38,7 +39,7 @@ func (ba *BesideApp) Run() error {
 		}
 	}
 
-	id := app.NewImageDouble(ba.dirPath, ba.dirPath)
+	id := app.NewImageDouble(ba.dirPath, ba.dirPath, ba.WebPToPng)
 
 	targetExts := []string{".jpg", ".jpeg", ".png", ".gif", ".webp"}
 	err := filepath.WalkDir(ba.dirPath, func(fullPath string, info fs.DirEntry, err error) error {

@@ -103,6 +103,11 @@ var World = WorldMap{
 		"Failed to get image detail of %s: %v":                                     "%s の画像情報取得に失敗しました: %v",
 		"Image type is not %s expected %s":                                         "画像タイプが %s で期待される %s ではありません",
 		"Image dimensions are different between input(%dx%d) and converted(%dx%d)": "画像サイズが入力(%dx%d)と変換後(%dx%d)で異なります",
+		"Failed to create a tmp file to write PNG data: %v":                        "PNGデータを書き込むための一時ファイルの作成に失敗しました: %v",
+		"Failed to open %s as PNG file: %v":                                        "%s をPNGファイルとして開けませんでした: %v",
+		"Failed to decode PNG image: %v":                                           "PNG画像のデコードに失敗しました: %v",
+		"Failed to create %s as JPEG file: %v":                                     "%s をJPEGファイルとして作成できませんでした: %v",
+		"Failed to encode JPEG image: %v":                                          "JPEG画像のエンコードに失敗しました: %v",
 
 		// imagetype/fastimage.go
 		"Failed to open file %s for fastimage: %v":          "fastimage 用にファイル %s を開けませんでした: %v",
@@ -117,6 +122,7 @@ var World = WorldMap{
 
 		// command.go
 		"Toolkit for converting conventionally formatted Web images to WebP":                   "従来フォーマットの画像ファイルをWebPに変換するツールキット",
+		"Convert WebP to PNG (default is WebP to JPEG)":                                        "WebPをPNGに変換 (デフォルトはWebPからJPEGに変換)",
 		"Log level to display (trace, debug, info, warn, error, fatal, silent)":                "表示するログレベル (trace, debug, info, warn, error, fatal, silent)",
 		"Umask for file and directory creation":                                                "ファイルとディレクトリの作成のための Umask 値 (例 0022)",
 		"Print the version number":                                                             "バージョン番号を表示",

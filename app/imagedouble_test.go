@@ -17,7 +17,7 @@ func TestImageDoubleSuccessThenError(t *testing.T) {
 	cp.Copy("../testdata/tree/", srcRootPath)
 	destRootPath := tmp + "/.mirror/"
 
-	id := NewImageDouble(srcRootPath, destRootPath)
+	id := NewImageDouble(srcRootPath, destRootPath, true)
 	relPath := "dir/simple.jpg"
 	err := id.Ensure(relPath)
 
@@ -75,7 +75,7 @@ func TestImageDoubleErrorThenSuccess(t *testing.T) {
 	cp.Copy("../testdata/tree/", srcRootPath)
 	destRootPath := tmp + "/.mirror/"
 
-	id := NewImageDouble(srcRootPath, destRootPath)
+	id := NewImageDouble(srcRootPath, destRootPath, true)
 	relPath := "dir/cmyk.jpg"
 	err := id.Ensure(relPath)
 

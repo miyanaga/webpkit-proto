@@ -41,6 +41,7 @@ func TestBeside(t *testing.T) {
 	cp.Copy("../testdata/tree/", tmp+"/")
 
 	ba := NewBesideApp(tmp)
+	ba.WebPToPng = true
 	err := ba.Run()
 	if err != nil {
 		t.Errorf("Failed to run BesideApp: %v", err)
@@ -55,6 +56,8 @@ func TestBeside(t *testing.T) {
 		"dir/simple.jpg.webp",
 		"simple.png",
 		"simple.png.webp",
+		"simple.webp",
+		"simple.webp.png",
 	}
 	if !reflect.DeepEqual(entriesFirst, expectedFirst) {
 		t.Errorf("Unexpected file entries. Expected %v but got %v", expectedFirst, entriesFirst)
@@ -79,6 +82,8 @@ func TestBeside(t *testing.T) {
 		"dir/simple.jpg.webp",
 		"simple.png",
 		"simple.png.webp",
+		"simple.webp",
+		"simple.webp.png",
 	}
 	if !reflect.DeepEqual(entriesSecond, expectedSecond) {
 		t.Errorf("Unexpected file entries. Expected %v but got %v", expectedSecond, entriesSecond)

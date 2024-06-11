@@ -20,6 +20,7 @@ import (
 
 type AppOptions struct {
 	LogLevel     string
+	WebPToPng    bool
 	Umask        string
 	LockFilePath string
 	LockExpires  string
@@ -30,16 +31,17 @@ var (
 )
 
 func SetAppOptions(cmd *cobra.Command) {
+	cmd.PersistentFlags().BoolVarP(&GlobalAppOptions.WebPToPng, "webp-to-png", "", false, l10n.T("Convert WebP to PNG (default is WebP to JPEG)"))
 	cmd.PersistentFlags().StringVarP(&GlobalAppOptions.LogLevel, "log-level", "l", "info", l10n.T("Log level to display (trace, debug, info, warn, error, fatal, silent)"))
 	cmd.PersistentFlags().StringVarP(&GlobalAppOptions.LockFilePath, "lock-file", "", "", "Exclusive lock file path to control exclusive")
 	cmd.PersistentFlags().StringVarP(&GlobalAppOptions.LockExpires, "lock-expires", "", "1h", "Exclusive lock expires (e.g. 1h, 1d)")
 	cmd.PersistentFlags().StringVarP(&GlobalAppOptions.Umask, "umask", "", "022", l10n.T("Umask for file and directory creation"))
 }
 
-func ParseAppOptionsOrExit() (string, time.Duration) {
+func ParseAppOptionsOrExit() (string, time.Duration, bool) {
 	logger.LogLevel = logger.ParseLogLevel(GlobalAppOptions.LogLevel)
 	lockExpires := ParseDurationOrExit(GlobalAppOptions.LockExpires)
-	return GlobalAppOptions.LockFilePath, lockExpires
+	return GlobalAppOptions.LockFilePath, lockExpires, GlobalAppOptions.WebPToPng
 }
 
 func ParseDurationOrExit(durationStr string) time.Duration {
@@ -121,7 +123,7 @@ func BuildCommand() *cobra.Command {
 			app := mirror.NewMirrorApp(srcDirPath, destDirPath)
 
 			SetUmaskOrExit(GlobalAppOptions.Umask)
-			app.LockFilePath, app.LockExpires = ParseAppOptionsOrExit()
+			app.LockFilePath, app.LockExpires, app.WebPToPng = ParseAppOptionsOrExit()
 
 			err := app.Run()
 			if err != nil {
@@ -143,7 +145,7 @@ func BuildCommand() *cobra.Command {
 			app := beside.NewBesideApp(dirPath)
 
 			SetUmaskOrExit(GlobalAppOptions.Umask)
-			app.LockFilePath, app.LockExpires = ParseAppOptionsOrExit()
+			app.LockFilePath, app.LockExpires, app.WebPToPng = ParseAppOptionsOrExit()
 
 			err := app.Run()
 			if err != nil {

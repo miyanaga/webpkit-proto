@@ -26,6 +26,10 @@ func TestConverter(t *testing.T) {
 			path:      "simple/simple.webp",
 			outputExt: ".png",
 		},
+		{
+			path:      "simple/simple.webp",
+			outputExt: ".jpg",
+		},
 	}
 
 	tmp := t.TempDir()

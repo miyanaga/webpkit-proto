@@ -41,6 +41,8 @@ func TestMirrorApp(t *testing.T) {
 	cp.Copy("../testdata/tree/", tmp+"/")
 
 	ma := NewMirrorApp(tmp, tmp+"/.mirror")
+	ma.WebPToPng = false
+
 	err := ma.Run()
 	if err != nil {
 		t.Errorf("Failed to run MirrorApp: %v", err)
@@ -51,10 +53,12 @@ func TestMirrorApp(t *testing.T) {
 		".mirror/dir/cmyk.jpg.err",
 		".mirror/dir/simple.jpg.webp",
 		".mirror/simple.png.webp",
+		".mirror/simple.webp.jpg",
 		"dir/cmyk.jpg",
 		"dir/not-image.txt",
 		"dir/simple.jpg",
 		"simple.png",
+		"simple.webp",
 	}
 	if !reflect.DeepEqual(entriesFirst, expectedFirst) {
 		t.Errorf("Unexpected file entries. Expected %v but got %v", expectedFirst, entriesFirst)
@@ -75,10 +79,12 @@ func TestMirrorApp(t *testing.T) {
 		".mirror/dir/cmyk.jpg.webp",
 		".mirror/dir/simple.jpg.webp",
 		".mirror/simple.png.webp",
+		".mirror/simple.webp.jpg",
 		"dir/cmyk.jpg",
 		"dir/not-image.txt",
 		"dir/simple.jpg",
 		"simple.png",
+		"simple.webp",
 	}
 	if !reflect.DeepEqual(entriesSecond, expectedSecond) {
 		t.Errorf("Unexpected file entries. Expected %v but got %v", expectedSecond, entriesSecond)
