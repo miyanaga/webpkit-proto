@@ -7,8 +7,8 @@ import (
 	"github.com/ideamans/webpkit/l10n"
 )
 
-const (
-	Version = "1.0.0-b1"
+var (
+	Version = "1.0.0-b2"
 )
 
 func main() {
