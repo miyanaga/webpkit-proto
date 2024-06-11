@@ -41,14 +41,19 @@ func NewConverter(config ConverterConfig) *Converter {
 type SafeConvertCallback func(tmpPath string) error
 
 func (c *Converter) safeConvert(inputPath, outputPath string, expectedImageType fastimage.Type, shouldBeSmaller bool, cb SafeConvertCallback) error {
-	tmp, err := os.CreateTemp("", "webpkit")
+	tmpDir, err := os.MkdirTemp("", "webpkit")
 	if err != nil {
 		return l10n.E("Failed to create a tmp file: %v", err)
 	}
-	tmp.Close()
-	defer os.RemoveAll(tmp.Name())
+	defer os.RemoveAll(tmpDir)
+	tmp := filepath.Join(tmpDir, filepath.Base(outputPath))
+	f, err := os.Create(tmp)
+	if err != nil {
+		return l10n.E("Failed to create a tmp file: %v", err)
+	}
+	f.Close()
 
-	err = cb(tmp.Name())
+	err = cb(tmp)
 	if err != nil {
 		return err
 	}
@@ -58,9 +63,9 @@ func (c *Converter) safeConvert(inputPath, outputPath string, expectedImageType 
 		if err != nil {
 			return l10n.E("Failed to get stat of src file %s: %v", inputPath, err)
 		}
-		tmpStat, err := os.Stat(tmp.Name())
+		tmpStat, err := os.Stat(tmp)
 		if err != nil {
-			return l10n.E("Failed to get stat of tmp file %s: %v", tmp.Name(), err)
+			return l10n.E("Failed to get stat of tmp file %s: %v", tmp, err)
 		}
 		if tmpStat.Size() > srcStat.Size() {
 			return l10n.E("File size got larger by conversion %d > %d", tmpStat.Size(), srcStat.Size())
@@ -73,9 +78,9 @@ func (c *Converter) safeConvert(inputPath, outputPath string, expectedImageType 
 			return l10n.E("Failed to get image detail of %s: %v", inputPath, err)
 		}
 
-		tmpImage, err := imagetype.FastImage(tmp.Name())
+		tmpImage, err := imagetype.FastImage(tmp)
 		if err != nil {
-			return l10n.E("Failed to get image detail of %s: %v", tmp.Name(), err)
+			return l10n.E("Failed to get image detail of %s: %v", tmp, err)
 		}
 
 		if tmpImage.Type != expectedImageType {
@@ -88,7 +93,7 @@ func (c *Converter) safeConvert(inputPath, outputPath string, expectedImageType 
 	}
 
 	os.MkdirAll(filepath.Dir(outputPath), 0777)
-	os.Rename(tmp.Name(), outputPath)
+	os.Rename(tmp, outputPath)
 
 	return nil
 }
@@ -115,7 +120,7 @@ func (c *Converter) pngToWebP(inputPath string, outputPath string) error {
 
 func (c *Converter) gifToWebP(inputPath string, outputPath string) error {
 	return c.safeConvert(inputPath, outputPath, fastimage.WEBP, true, func(tmpPath string) error {
-		code := gif2webp.Gif2WebP("-o", tmpPath, inputPath)
+		code := gif2webp.Gif2WebP("-quiet", "-o", tmpPath, inputPath)
 		if code != 0 {
 			return l10n.E("gif2webp command exited with code %d", code)
 		}
@@ -135,23 +140,24 @@ func (c *Converter) webPToPng(inputPath string, outputPath string) error {
 
 func (c *Converter) webPToJpeg(inputPath string, outputPath string) error {
 	return c.safeConvert(inputPath, outputPath, fastimage.JPEG, false, func(tmpPath string) error {
-		tmp, err := os.CreateTemp("", "webpkit")
+		tmp := filepath.Join(filepath.Dir(tmpPath), filepath.Base(outputPath)+".png")
+		f, err := os.Create(tmp)
 		if err != nil {
 			return l10n.E("Failed to create a tmp file to write PNG data: %v", err)
 		}
-		tmp.Close()
-		defer os.RemoveAll(tmp.Name())
+		f.Close()
+		defer os.RemoveAll(tmp)
 
 		// Convert WebP to PNG at first
-		code := dwebp.DWebP("-quiet", "-o", tmp.Name(), inputPath)
+		code := dwebp.DWebP("-quiet", "-o", tmp, inputPath)
 		if code != 0 {
 			return l10n.E("dwebp command exited with code %d", code)
 		}
 
 		// Convert the PNG to JPEG
-		pngFile, err := os.Open(tmp.Name())
+		pngFile, err := os.Open(tmp)
 		if err != nil {
-			return l10n.E("Failed to open %s as PNG file: %v", tmp.Name(), err)
+			return l10n.E("Failed to open %s as PNG file: %v", tmp, err)
 		}
 		defer pngFile.Close()
 
