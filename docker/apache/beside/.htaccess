@@ -1,0 +1,23 @@
+<IfModule mod_setenvif.c>
+  SetEnvIf Request_URI "\.(jpe?g|png)$" _image_request
+</IfModule>
+
+<IfModule mod_rewrite.c>
+  RewriteEngine On
+
+  RewriteCond %{HTTP_ACCEPT} image/webp
+  RewriteCond %{DOCUMENT_ROOT}/$1.$2.webp -f
+  RewriteRule ^(.*)\.(jpe?g|png|gif)$ $1.$2.webp [T=image/webp]
+
+  RewriteCond %{HTTP_ACCEPT} !image/webp
+  RewriteCond %{DOCUMENT_ROOT}/$1.$2.png -f
+  RewriteRule ^(.*)\.(webp)$ $1.$2.png [T=image/png]
+</IfModule>
+
+<IfModule mod_headers.c>
+  Header append Vary Accept env=_image_request
+</IfModule>
+
+<IfModule mod_mime.c>
+  AddType image/webp .webp
+</IfModule>

@@ -31,9 +31,9 @@ var (
 
 func SetAppOptions(cmd *cobra.Command) {
 	cmd.PersistentFlags().StringVarP(&GlobalAppOptions.LogLevel, "log-level", "l", "info", l10n.T("Log level to display (trace, debug, info, warn, error, fatal, silent)"))
-	cmd.Flags().StringVarP(&GlobalAppOptions.LockFilePath, "lock-file", "", "", "Exclusive lock file path to control exclusive")
-	cmd.Flags().StringVarP(&GlobalAppOptions.LockExpires, "lock-expires", "", "", "Exclusive lock expires (e.g. 1h, 1d)")
-	cmd.PersistentFlags().StringVarP(&GlobalAppOptions.Umask, "umask", "", "0002", l10n.T("Umask for file and directory creation"))
+	cmd.PersistentFlags().StringVarP(&GlobalAppOptions.LockFilePath, "lock-file", "", "", "Exclusive lock file path to control exclusive")
+	cmd.PersistentFlags().StringVarP(&GlobalAppOptions.LockExpires, "lock-expires", "", "1h", "Exclusive lock expires (e.g. 1h, 1d)")
+	cmd.PersistentFlags().StringVarP(&GlobalAppOptions.Umask, "umask", "", "022", l10n.T("Umask for file and directory creation"))
 }
 
 func ParseAppOptionsOrExit() (string, time.Duration) {
@@ -107,7 +107,7 @@ func BuildCommand() *cobra.Command {
 			}
 		},
 	}
-	convertCmd.PersistentFlags().StringVarP(&GlobalAppOptions.Umask, "umask", "", "002", l10n.T("Umask for file and directory creation"))
+	convertCmd.PersistentFlags().StringVarP(&GlobalAppOptions.Umask, "umask", "", "022", l10n.T("Umask for file and directory creation"))
 	rootCmd.AddCommand(&convertCmd)
 
 	// mirror sub command

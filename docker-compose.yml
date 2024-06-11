@@ -1,0 +1,25 @@
+services:
+  apache-mirror:
+    build:
+      context: .
+      dockerfile: ./docker/apache/mirror/Dockerfile
+    ports:
+      - "8080:80"
+  apache-beside:
+    build:
+      context: .
+      dockerfile: ./docker/apache/beside/Dockerfile
+    ports:
+      - "8081:80"
+  nginx-mirror:
+    build:
+      context: .
+      dockerfile: ./docker/nginx/mirror/Dockerfile
+    ports:
+      - "8180:80"
+  nginx-beside:
+    build:
+      context: .
+      dockerfile: ./docker/nginx/beside/Dockerfile
+    ports:
+      - "8181:80"

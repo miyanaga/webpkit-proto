@@ -38,6 +38,10 @@ test: $(DEPS)
 debug: $(DEPS)
 	go run ./...
 
+.PHONY: integration
+integration: webpkit
+	docker compose up --build
+
 .PHONY: clean
 clean:
 	rm -rf libwebp/build
